@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="member">
+	
+		<!-- 회원리스트 -->
+		<select id="memberList" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT
+					MEM_ID,
+					MEM_NAME,
+					MEM_EMAIL,
+					MEM_PHONE,
+					MEM_RDATE
+				FROM
+					MEMBER
+					
+				ORDER BY MEM_RDATE DESC
+			]]>
+		</select>
+		
+		<!-- 로그인 -->
+		<select id="selectMemberId" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				MEMBER
+			WHERE
+				MEM_ID = #{MEM_ID}
+			AND
+				MEM_DEL = 1
+		]]>
+		</select>
+	
+		<!-- 카카오 로그인 -->
+		<select id="selectKakaoId" parameterType="hashmap" resultType="hashmap">
+		   <![CDATA[
+		      SELECT 
+		      	* 
+		      FROM 
+		         MEMBER
+		      WHERE 
+		          MEM_ID= #{MEM_ID, jdbcType=VARCHAR} 
+		   ]]>
+  		</select>
+		
+		<!-- 회원가입 -->
+		<insert id="registerMember" parameterType="hashmap">
+			 <![CDATA[
+			INSERT INTO 
+				MEMBER VALUES 
+				(#{MEM_ID}, 
+				#{MEM_PWD}, 
+				#{MEM_NAME}, 
+				SYSDATE, 
+				#{MEM_EMAIL}, 
+				#{MEM_ADDR1}, 
+				#{MEM_ADDR2}, 
+				#{MEM_ZP}, 
+				#{MEM_PHONE}, 
+				1)
+			]]>
+		</insert>
+		
+		<!-- 아이디 찾기 -->
+		<select id="findId" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+			SELECT 
+				MEM_ID, 
+				MEM_NAME 
+			FROM
+				MEMBER 
+			WHERE 
+				MEM_EMAIL = #{user_email} 
+			AND 
+				MEM_NAME = #{user_name}
+			]]>
+		</select>
+		
+		<!-- 전화번호로 찾기 -->
+		<select id="findIdPhone" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+			SELECT 
+				MEM_ID, 
+				MEM_NAME 
+			FROM
+				MEMBER 
+			WHERE 
+				MEM_PHONE = #{user_phone} 
+			AND 
+				MEM_NAME = #{user_name}
+			]]>
+		</select>
+
+
+	<!-- 비밀번호 찾기 -->
+		<select id="findPw" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT 
+				MEM_PWD, 
+				MEM_NAME 
+			FROM 
+				MEMBER 
+			WHERE 
+				MEM_NAME = #{user_name} 
+			AND 
+				MEM_ID = #{user_id}
+		]]>
+	</select>
+	
+	<!-- 회원정보 수정 -->
+	<update id="updateMember" parameterType="hashmap" >
+	   <![CDATA[
+	      UPDATE 
+	      	MEMBER 
+	      SET  
+	         MEM_NAME = #{MEM_NAME}, 
+	         MEM_EMAIL = #{MEM_EMAIL}, 
+	         MEM_ADDR1 = #{MEM_ADDR1}, 
+	         MEM_ADDR2 = #{MEM_ADDR2}, 
+	         MEM_ZP = #{MEM_ZP}, 
+	         MEM_PHONE = #{MEM_PHONE}
+	      WHERE 
+	         MEM_ID = #{MEM_ID, jdbcType=VARCHAR}
+	   ]]>
+	</update>
+
+	<!-- 회원수정 - 회원 선택 -->
+	<select id="detailMember" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+      		SELECT 
+      			* 
+      		FROM 
+         		MEMBER
+          	WHERE 
+          		MEM_ID= #{MEM_ID, jdbcType=VARCHAR} 
+        ]]>
+	</select>
+	
+	<!-- 회원 탈퇴 -->
+	<update id="deleteMember" parameterType="hashmap">
+		<![CDATA[
+			UPDATE
+				MEMBER
+			SET
+				MEM_DEL = 2
+			WHERE
+				MEM_ID = #{MEM_ID}
+		]]>
+		
+		
+	</update>
+	
+	<!-- 일반회원 > 마이페이지 > 주문내역 > 주문조회 -->
+	<select id="selectOrder" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT abc.ITEM_ID, abc.SELL_ID, abc.SELL_NAME, abc.SELL_PHONE, abc.ORDER_ID, abc.ORDER_MEM, abc.ORDER_ITEM, abc.ORDER_PRICE, abc.ORDER_COUNT, abc.ORDER_STATE, abc.ORDER_DATE, FILE_ORG, FILE_STD, FILE_NUM
+		        FROM (SELECT ITEM_ID, ab.SELL_ID, ab.SELL_NAME, ab.SELL_PHONE, ab.ORDER_ID, ab.ORDER_MEM, ab.ORDER_ITEM, ab.ORDER_PRICE, ab.ORDER_COUNT, ab.ORDER_STATE, ab.ORDER_DATE
+		            FROM (SELECT a.SELL_ID, a.SELL_NAME, a.SELL_PHONE, b.ORDER_ID, b.ORDER_MEM, b.ORDER_ITEM, b.ORDER_PRICE, b.ORDER_COUNT, b.ORDER_STATE, b.ORDER_DATE
+		                    FROM SELLER a
+		                INNER JOIN ORDERS b
+		                    ON a.SELL_ID = b.ORDER_SELLER) ab
+		            INNER JOIN ITEM c
+		                ON c.ITEM_NAME = ab.ORDER_ITEM) abc
+		        INNER JOIN FOLDER d
+		            ON abc.ITEM_ID = d.ITEM_ID
+		        WHERE abc.ORDER_MEM = #{MEM_ID} AND abc.ORDER_DATE BETWEEN TO_DATE(#{DATE_START}, 'YYYY-MM-DD') AND TO_DATE(#{DATE_END}, 'YYYY-MM-DD')+1
+	        AND MOD(FILE_NUM, 2) = 1
+			
+        ]]>
+	</select>
+	
+	<!-- // 일반회원 > 마이페이지 > 주문내역 > 상태변경 -->
+	<update id="orderState" parameterType="hashmap" >
+	   <![CDATA[
+	      UPDATE 
+	      	ORDERS
+	      SET  
+	         ORDER_STATE = #{ORDER_STATE}
+	      WHERE 
+	         ORDER_ID = #{ORDER_ID}
+	   ]]>
+	</update>
+	
+	<!-- 일반회원 > 마이페이지 > 라뷰보기 -->
+	<select id="selectMyReview" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT *
+			FROM REVIEW
+			WHERE RE_MEM = #{ORDER_ID}
+			ORDER BY RE_REF DESC, RE_IDX ASC
+        ]]>
+	</select>
+	
+	<!-- 일반회원 > 마이페이지 > 찜하기 -->
+	<select id="selectMyPutLike" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			
+			
+			SELECT *
+			FROM (
+			    SELECT ROWNUM, A.ITEM_ID, A.ITEM_NAME, A.ITEM_IMAGE, A.ITEM_DATE, A.SELL_ID, A.ITEM_CONT, A.ITEM_SUB, A.ITEM_COMP, A.ITEM_LOC, A.ITEM_200, A.ITEM_500, B.FILE_ORG, B.FILE_STD, B.FILE_NUM
+			    FROM ITEM A INNER JOIN FOLDER B
+			    ON A.ITEM_ID = B.ITEM_ID AND A.ITEM_DEL = 'N') AB
+			INNER JOIN LIKES C
+			ON C.UP_ID = AB.ITEM_ID
+			WHERE UP_MEM = #{UP_MEM} AND MOD(AB.FILE_NUM, 2) = 1
+        ]]>
+	</select>
+	
+	</mapper>

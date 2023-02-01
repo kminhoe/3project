@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="review">
+	
+	<!-- 리뷰 입력 -->
+	<insert id="insertReview" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO
+			REVIEW
+		VALUES(
+			REVIEW_SEQ.NEXTVAL,
+			#{RE_ITEM},
+			#{RE_MEM},
+			#{RE_SELLER},
+			SYSDATE,
+			#{RE_CONTENT},
+			#{RE_REF},
+			#{RE_STEP}
+		)
+	]]>
+	</insert>
+	
+	</mapper>

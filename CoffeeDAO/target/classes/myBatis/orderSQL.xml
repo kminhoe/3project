@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="order">
+	
+		<!-- 주문 -->
+		<insert id="insertOrder" parameterType="hashmap">
+			 <![CDATA[
+			 	 
+			INSERT INTO 
+				ORDERS 
+				(ORDER_IDX, ORDER_ID, ORDER_CART, ORDER_MEM, ORDER_NAME, ORDER_DATE, ORDER_NO, ORDER_ITEM, ORDER_COUNT, ORDER_PRICE, 
+				ORDER_TOT, ORDER_ADDR1, ORDER_ADDR2, ORDER_ZP, ORDER_PHONE, ORDER_HOLDER, ORDER_BILL, ORDER_STATE, ORDER_SELLER, 
+				ORDER_MEMO, ORDER_GRIND)
+				VALUES
+				(ORDERS_SEQ.NEXTVAL,
+				#{ORDER_ID}, 
+				#{ORDER_CART}, 
+				#{ORDER_MEM}, 
+				#{ORDER_NAME}, 
+				SYSDATE, 
+				#{ORDER_NO},
+				#{ORDER_ITEM},
+				#{ORDER_COUNT},
+				#{ORDER_PRICE},
+				#{ORDER_TOT},
+				#{ORDER_ADDR1},
+				#{ORDER_ADDR2},
+				#{ORDER_ZP},
+				#{ORDER_PHONE},
+				#{ORDER_HOLDER}, 
+				#{ORDER_BILL},
+				#{ORDER_STATE}, 
+				#{ORDER_SELLER}, 
+				#{ORDER_MEMO},
+				#{ORDER_GRIND} )
+			]]>
+		</insert>
+		
+		<!-- 바로 구매 select -->
+		<select id="selectItem" parameterType="hashmap" resultType="hashmap">
+			 <![CDATA[
+			 	 
+			SELECT *
+	        FROM ITEM
+	        WHERE 
+	        ITEM_ID = #{ITEM_ID}
+	
+			]]>
+		</select>
+		
+		
+		<!-- 결제 -->
+		<insert id="insertPayment" parameterType="hashmap">
+			 <![CDATA[
+			 	 
+			INSERT INTO 
+				PAYMENT 
+				(PAY_IDX, PAY_ID, PAY_TOT, PAY_DATE)
+				VALUES
+				(PAYMENT_SEQ.NEXTVAL,
+				#{PAY_ID}, 
+				#{PAY_TOT}, 
+				 SYSDATE )
+			]]>
+		</insert>
+		
+		
+		<delete id="deleteList" parameterType="hashmap">
+	
+	<![CDATA[
+	
+	DELETE 
+	FROM CART
+	WHERE 
+	CART_IDX = #{CART_IDX}
+	
+	]]>
+	
+	</delete>
+		
+		
+	<!--구매정보 확인 -->
+
+
+
+<select parameterType="hashmap" id="selectOrderState" resultType="int">
+
+<![CDATA[
+			 	 
+			SELECT count(*)
+	        	FROM ORDERS
+	        WHERE 
+	        	ORDER_MEM = #{ORDER_MEM}
+	        AND
+	        	ORDER_NO = #{ORDER_NO}
+	        	
+            AND
+	        	ORDER_STATE = '구매확정'
+	
+			]]>
+</select>
+	
+	
+	</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="admin">
+	
+		<select id="countMember" resultType="int">
+			<![CDATA[
+				SELECT COUNT(*) FROM MEMBER WHERE MEM_ID LIKE #{KEYWORD}
+			]]>		
+		</select>
+		
+		<!-- 자유 게시판 리스트 -->
+		<select id="memberList" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT MOA.* 
+				FROM (
+					SELECT COUNT(*) OVER() AS TOTAL_COUNT, MEM.*
+					FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY MEM_RDATE DESC) RNUM, MEM_ID, MEM_NAME, MEM_RDATE, MEM_EMAIL,
+						MEM_ADDR1, MEM_ADDR2, MEM_ZP, MEM_PHONE, MEM_DEL FROM MEMBER WHERE MEM_ID LIKE #{KEYWORD}
+					) MEM
+				) MOA WHERE MOA.RNUM BETWEEN #{start} AND #{end}
+			]]>		
+		</select>
+		
+		<select id="countSeller" resultType="int">
+			<![CDATA[
+				SELECT COUNT(*) FROM SELLER WHERE SELL_ID LIKE #{KEYWORD}
+			]]>		
+		</select>
+		
+		<!-- 자유 게시판 리스트 -->
+		<select id="adminSellerList" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT SOA.* 
+				FROM (
+					SELECT COUNT(*) OVER() AS TOTAL_COUNT, SELL.*
+					FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY SELL_RDATE DESC) RNUM, SELL_ID, SELL_NUM, SELL_NAME, SELL_RDATE, SELL_EMAIL,
+						SELL_ADDR1, SELL_ADDR2, SELL_ZP, SELL_PHONE, SELL_BANK, SELL_PROF, SELL_IMAGE, SELL_CONT, SELL_BNUM, SELL_SNS, SELL_STATE FROM SELLER WHERE SELL_ID LIKE #{KEYWORD}
+					) SELL
+				) SOA WHERE SOA.RNUM BETWEEN #{start} AND #{end}
+			]]>		
+		</select>
+		
+		<update id="adminSellerValidate" parameterType="hashmap">
+			<![CDATA[
+				UPDATE SELLER 
+	      		SET  
+	         		SELL_STATE = #{SELL_STATE}
+	         	WHERE 
+	         		SELL_ID = #{SELL_ID}
+			]]>
+		</update>
+		
+		<insert id="noticeWrite" parameterType="hashmap" >
+			<![CDATA[
+				INSERT INTO
+				BOARD (
+					BO_IDX, BO_TITLE, BO_DATE, BO_MEMID, BO_CONT, BO_IMAGE, BO_TYPE
+				) VALUES (
+					BOARD_SEQ.NEXTVAL, #{BO_TITLE}, SYSDATE, 'COFFEDAOTEAM', #{BO_CONT}, #{BO_IMAGE}, 'N'
+				)
+			 ]]>
+		</insert>
+		
+		<select id="adminNonValidatedSeller" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT SOA.* 
+				FROM (
+					SELECT COUNT(*) OVER() AS TOTAL_COUNT, SELL.*
+					FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY SELL_RDATE DESC) RNUM, SELL_ID, SELL_NUM, SELL_NAME, SELL_RDATE, SELL_EMAIL,
+						SELL_ADDR1, SELL_ADDR2, SELL_ZP, SELL_PHONE, SELL_BANK, SELL_PROF, SELL_IMAGE, SELL_CONT, SELL_BNUM, SELL_SNS, SELL_STATE FROM SELLER WHERE SELL_ID LIKE #{KEYWORD} AND SELL_STATE = 2
+					) SELL
+				) SOA WHERE SOA.RNUM BETWEEN #{start} AND #{end}
+			]]>		
+		</select>
+	
+	</mapper>

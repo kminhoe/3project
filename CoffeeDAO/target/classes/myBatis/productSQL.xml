@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="product">
+
+	
+<select resultType="hashmap" parameterType="hashmap" id="bestItemList">
+
+<![CDATA[
+				SELECT * FROM ITEM A INNER JOIN FOLDER B ON A.ITEM_ID = B.ITEM_ID AND A.ITEM_DEL = 'N' WHERE MOD(B.FILE_NUM, 2) = 1
+			]]>
+</select>
+
+<!-- 상품 조회 -->
+
+
+
+<select resultType="hashmap" parameterType="hashmap" id="selectProductList">
+
+<![CDATA[
+			SELECT *
+				FROM
+			ITEM A INNER JOIN FOLDER B
+				ON A.ITEM_ID = B.ITEM_ID
+					AND A.ITEM_DEL = 'N'
+						WHERE MOD(B.FILE_NUM, 2) = 1
+		]]>
+<!-- SELECT ITEM_ID, ITEM_200, ITEM_500, ITEM_NAME, SELL_ID, ITEM_DEL, FILE_STD, 
+ITEM_DATE FROM (SELECT ITEM_ID, ITEM_200, ITEM_500, ITEM_NAME, SELL_ID, ITEM_DEL, 
+FILE_STD, ITEM_DATE FROM (SELECT NUM, I.ITEM_ID, ITEM_200, ITEM_500, ITEM_DATE, 
+ITEM_NAME, SELL_ID, ITEM_DEL FROM(SELECT MIN(FILE_NUM) AS NUM, ITEM_ID FROM FOLDER 
+WHERE FILE_DEL = 'N' GROUP BY ITEM_ID) F, ITEM I WHERE F.ITEM_ID = I.ITEM_ID) AINNER 
+JOIN (SELECT FILE_NUM, FILE_STD FROM FOLDER) B ON A.NUM = B.FILE_NUM) -->
+
+
+
+
+</select>
+
+<!-- 상품 ID조회 -->
+
+
+
+<select resultType="hashmap" parameterType="hashmap" id="selectProductId">
+
+<![CDATA[
+	 			SELECT * 
+	 				FROM 
+	 					ITEM A INNER JOIN FOLDER B 
+	 						ON A.ITEM_ID = B.ITEM_ID 
+	 							INNER JOIN SELLER C 
+	 								ON A.SELL_ID = C.SELL_ID 
+	 									AND A.ITEM_ID = #{ITEM_ID}
+	 										WHERE MOD(B.FILE_NUM, 2) = 1
+			]]>
+<!-- SELECT ITEM_ID, ITEM_200, ITEM_500, ITEM_NAME, SELL_ID, ITEM_DEL, FILE_STD, 
+ITEM_DATE FROM (SELECT ITEM_ID, ITEM_200, ITEM_500, ITEM_NAME, SELL_ID, ITEM_DEL, 
+FILE_STD, ITEM_DATE FROM (SELECT NUM, I.ITEM_ID, ITEM_200, ITEM_500, ITEM_DATE, 
+ITEM_NAME, SELL_ID, ITEM_DEL FROM(SELECT MIN(FILE_NUM) AS NUM, ITEM_ID FROM FOLDER
+ WHERE FILE_DEL = 'N' GROUP BY ITEM_ID) F, ITEM I WHERE F.ITEM_ID = I.ITEM_ID) 
+ AINNER JOIN (SELECT FILE_NUM, FILE_STD FROM FOLDER) B ON A.NUM = B.FILE_NUM) WHERE ITEM_ID = #{ITEM_ID} -->
+
+
+</select>
+
+	<!-- 상품 등록 -->
+	<insert id="insertProduct" parameterType="hashmap"
+		useGeneratedKeys="true" keyProperty="ITEM_ID">
+		<selectKey keyProperty="ITEM_ID" resultType="string"
+			order="BEFORE">
+			SELECT ITEM_SEQ.NEXTVAL FROM DUAL
+		</selectKey>
+			 <![CDATA[
+			INSERT INTO 
+				ITEM 
+				(ITEM_ID, 
+				ITEM_NAME, 
+				ITEM_DATE, 
+				ITEM_CONT, 
+				ITEM_SUB, 
+				ITEM_COMP,  
+				ITEM_LOC, 
+ 				ITEM_200, 
+ 				ITEM_500, 
+ 				ITEM_CAF, 
+ 				ITEM_TASTE, 
+				ITEM_TYPE,
+				SELL_ID
+				)
+				VALUES 
+				(#{ITEM_ID}, 
+				#{ITEM_NAME}, 
+				SYSDATE, 
+				#{ITEM_CONT}, 
+ 				#{ITEM_SUB}, 
+ 				#{ITEM_COMP}, 
+ 				#{ITEM_LOC},
+ 				#{ITEM_200}, 
+ 				#{ITEM_500},  
+				#{ITEM_CAF}, 
+				#{ITEM_TASTE}, 
+				#{ITEM_TYPE},
+				#{SELL_ID}
+				)
+			]]>
+	</insert>
+	
+	
+
+	<!-- 상품 이미지 등록 -->
+	<insert id="insertProductImg" parameterType="hashmap">
+			 <![CDATA[
+			INSERT INTO FOLDER
+           (
+			FILE_NUM,
+			ITEM_ID,
+			FILE_ORG,
+			FILE_STD,
+			FILE_SIZE,
+			FILE_DATE
+		    )
+				VALUES 
+           (
+			FILE_SEQ.NEXTVAL,
+			#{ITEM_ID},
+			#{FILE_ORG},
+			#{FILE_STD},
+			#{FILE_SIZE},
+			SYSDATE			
+		    )
+			]]>
+	</insert>
+	
+
+	<!-- 상품 수정 -->
+	<update id="updateProduct" parameterType="hashmap">
+			 <![CDATA[
+	      UPDATE 
+	      	ITEM
+	      SET
+			 ITEM_NAME = #{ITEM_NAME}, 
+	         ITEM_CONT = #{ITEM_CONT}, 
+	         ITEM_SUB = #{ITEM_SUB}, 
+	         ITEM_COMP = #{ITEM_COMP}, 
+	         ITEM_LOC = #{ITEM_LOC}, 
+	         ITEM_200 = #{ITEM_200},
+	         ITEM_500 = #{ITEM_500}, 
+	         ITEM_CAF = #{ITEM_CAF}, 
+	         ITEM_TASTE = #{ITEM_TASTE}, 
+	         ITEM_TYPE = #{ITEM_TYPE}
+	      WHERE 
+	         ITEM_ID = #{ITEM_ID}
+	   ]]>
+	</update>
+
+	<!-- 상품 이미지 수정 -->
+	<update id="updateProductImg" parameterType="hashmap">
+			 <![CDATA[
+	      UPDATE 
+	      	FOLDER
+	      SET
+			FILE_ORG = #{FILE_ORG},
+			FILE_STD = #{FILE_STD},
+			FILE_SIZE = #{FILE_SIZE}
+	      WHERE 
+	         ITEM_ID = #{ITEM_ID} AND FILE_NUM = #{FILE_NUM}
+	   ]]>
+	</update>
+
+
+	<!-- 상품 삭제 -->
+	<update id="deleteProduct" parameterType="hashmap">
+			 <![CDATA[
+	UPDATE ITEM SET ITEM_DEL='Y' WHERE ITEM_ID = #{ITEM_ID}
+			]]>
+	</update>
+
+	<!-- 상품 이미지 삭제 -->
+	<update id="deleteProductImg" parameterType="hashmap">
+			 <![CDATA[
+	UPDATE FOLDER SET FILE_DEL='Y' WHERE ITEM_ID = #{ITEM_ID}
+			]]>
+	</update>
+
+	
+	
+	<!-- 판매자 페이지 - 상품관리 - 내 상품 목록 - 총 등록 상품 수 -->
+	<select id="selectItemCount" resultType="int">
+	<![CDATA[
+	SELECT COUNT(*) FROM ITEM WHERE SELL_ID = #{SELL_ID} AND ITEM_DEL='N'
+				]]>
+	</select>
+
+	<!-- 판매자 페이지 - 상품관리 - 상품리스트 - 상품디테일 -->
+	<select id="myProductDetail" parameterType="hashmap"
+		resultType="hashmap">
+			 <![CDATA[
+			SELECT * FROM ITEM I INNER JOIN FOLDER F ON I.ITEM_ID = F.ITEM_ID WHERE I.ITEM_ID = #{ITEM_ID} AND FILE_DEL = 'N'
+			]]>
+	</select>
+	
+	 <select id="reviewList" parameterType="hashmap" resultType="hashmap">
+			 <![CDATA[
+			SELECT * FROM REVIEW WHERE RE_ITEM = #{RE_ITEM} ORDER BY RE_REF, RE_STEP
+			]]>
+	</select>
+	
+	<!-- 판매자 페이지 - 상품관리 - 내 상품 목록 - 상품 리뷰 목록 - 페이징 -->
+	<select id="myProductReviewList" parameterType="hashmap"
+		resultType="hashmap">
+	<![CDATA[
+	SELECT * FROM (SELECT ROWNUM RN, RE_IDX, RE_ITEM, RE_MEM, TO_CHAR(RE_DATE, 'YY.MM.DD') AS RE_DATE, RE_CONTENT, RE_STEP, RE_REF
+	FROM (SELECT * FROM REVIEW WHERE RE_ITEM = #{RE_ITEM} AND RE_STEP = '0' ORDER BY RE_IDX DESC) ORDER BY RN) 
+	WHERE RN BETWEEN (#{nowPage}*5-4) AND (#{nowPage}*5)
+	]]>
+	</select>
+
+	<!-- 판매자 페이지 - 상품관리 - 내 상품 목록 - 상품 리뷰 목록 - 총 등록 리뷰 수 -->
+	<select id="selectReviewCount" resultType="int">
+	<![CDATA[
+	SELECT COUNT(*) FROM REVIEW WHERE RE_ITEM = #{RE_ITEM} AND RE_STEP = '0'
+	]]>
+	</select>
+
+	<!-- 판매자 페이지 - 상품관리 - 내 상품 목록 - 상품 리뷰 목록 - 리뷰 답글 상세보기 - 답변 등록 -->
+	<insert id="insertAnswer" parameterType="hashmap">
+			 <![CDATA[
+			INSERT INTO 
+				REVIEW
+				(
+				RE_IDX, 
+				RE_ITEM, 
+				RE_DATE, 
+				RE_CONTENT, 
+				RE_SELLER,
+				RE_STEP,
+				RE_REF
+				)
+				VALUES 
+				(
+				REVIEW_SEQ.NEXTVAL, 
+				#{RE_ITEM}, 
+				SYSDATE, 
+				#{RE_CONTENT}, 
+				#{RE_SELLER},
+				'1',
+				#{RE_REF}
+				)
+			]]>
+	</insert>
+
+	<!-- 판매자 페이지 - 상품관리 - 내 상품 목록 - 상품 리뷰 목록 - 리뷰 답글 상세보기 - 답변 수정 -->
+	<update id="UpdateAnswer" parameterType="hashmap">
+			 <![CDATA[
+			UPDATE
+				REVIEW SET
+				RE_CONTENT=#{RE_CONTENT}
+			 WHERE 
+	         RE_REF= #{RE_REF} AND RE_STEP = '1'
+			]]>
+	</update>
+	
+	<!-- 판매자 페이지 - 상품관리 - 내 상품 목록 - 상품 리뷰 목록 - 리뷰 상세보기 -->
+	<select id="myProductReviewDetail" parameterType="hashmap"
+		resultType="hashmap">
+		<![CDATA[
+		SELECT RE_IDX, RE_ITEM, RE_MEM, TO_CHAR(RE_DATE, 'YY.MM.DD') AS RE_DATE, RE_CONTENT, RE_STEP, RE_REF
+		FROM REVIEW WHERE RE_IDX= #{RE_IDX}
+		]]>
+	</select>
+
+	<!-- 판매자 페이지 - 상품관리 - 내 상품 목록 - 상품 리뷰 목록 - 리뷰 답글 상세보기 -->
+	<select id="myProductReviewAnswerDetail" parameterType="hashmap"
+		resultType="hashmap">
+		<![CDATA[
+		SELECT RE_IDX, RE_ITEM, RE_SELLER, TO_CHAR(RE_DATE, 'YY.MM.DD') AS RE_DATE, RE_CONTENT, RE_STEP, RE_REF
+		FROM REVIEW WHERE RE_REF= #{RE_REF} AND RE_STEP = '1'
+		]]>
+	</select>
+	
+	<!-- 상품 이미지 수정 -->
+	<update id="updateImage" parameterType="hashmap">
+	
+	UPDATE ITEM SET ITEM_IMAGE = #{ITEM_IMAGE} WHERE ITEM_ID = #{ITEM_ID}
+	
+	
+	</update>
+	
+	
+	<select id="myProductList" parameterType="hashmap"
+resultType="hashmap">
+ <![CDATA[
+SELECT * FROM (SELECT ROWNUM RN, ITEM_ID, ITEM_200, ITEM_500, ITEM_NAME, SELL_ID, ITEM_DEL, FILE_STD, ITEM_DATE FROM (SELECT ITEM_ID, ITEM_200, ITEM_500, ITEM_NAME, SELL_ID, ITEM_DEL, FILE_STD, TO_CHAR(ITEM_DATE, 'YY.MM.DD') AS ITEM_DATE FROM (SELECT NUM, I.ITEM_ID, ITEM_200, ITEM_500, ITEM_DATE, ITEM_NAME, SELL_ID, ITEM_DEL FROM 
+(SELECT MIN(FILE_NUM) AS NUM, ITEM_ID FROM FOLDER WHERE FILE_DEL = 'N' GROUP BY ITEM_ID) F, ITEM I WHERE F.ITEM_ID = I.ITEM_ID) A
+INNER JOIN (SELECT FILE_NUM, FILE_STD FROM FOLDER) B ON A.NUM = B.FILE_NUM WHERE SELL_ID = #{SELL_ID} AND ITEM_DEL='N' ORDER BY ITEM_ID DESC) ORDER BY RN) WHERE RN BETWEEN (#{nowPage}*5-4) AND (#{nowPage}*5)
+]]>
+</select>
+	
+	
+
+</mapper>

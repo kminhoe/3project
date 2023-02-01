@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="cart">
+	
+	<!-- 장바구니 생성 -->
+	<insert id="insertCart" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO
+			CART
+		VALUES(
+			CART_SEQ.NEXTVAL,
+			#{CART_NAME},
+			#{CART_ID},
+			#{CART_PRICE},
+			'N',
+			#{CART_MEM},
+			#{CART_COUNT},
+			'',
+			#{CART_GRIND}
+		)
+	]]>
+	</insert>
+	
+	<select id="cartList" parameterType="hashmap" resultType="hashmap">
+	
+	<![CDATA[
+	
+	SELECT *
+	FROM CART
+    INNER JOIN ITEM
+    ON ITEM_ID = CART_ID
+	WHERE 
+	CART_MEM = #{CART_MEM}
+
+	
+	]]>
+
+	</select>
+	
+	<delete id="cartDelete" parameterType="hashmap">
+	
+	<![CDATA[
+	
+	DELETE 
+	FROM CART
+	WHERE 
+	CART_IDX = #{CART_IDX}
+	
+	]]>
+	
+	</delete>
+	
+	<select id="selectNum" parameterType="hashmap">
+
+	UPDATE CART 
+	SET CART_CHECK = 'Y' 
+	WHERE CART_IDX = #{value}
+	
+	</select>
+	
+	<select id="selectNot" parameterType="hashmap">
+
+	UPDATE CART 
+	SET CART_CHECK = 'N' 
+	WHERE CART_IDX = #{value}
+	
+	</select>
+
+	
+	
+	
+	
+	</mapper>

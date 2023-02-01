@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="board">
+		
+		<!-- 자유 게시판 리스트 -->
+		<select id="countBoard" resultType="int">
+			<![CDATA[
+				SELECT COUNT(*) FROM BOARD WHERE BO_TYPE = #{BO_TYPE} AND BO_TITLE LIKE #{KEYWORD}
+			]]>		
+		</select>
+		
+		<!-- 자유 게시판 리스트 -->
+		<select id="selectBoardList" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT BOA.* 
+				FROM (
+					SELECT COUNT(*) OVER() AS TOTAL_COUNT, BO.*
+					FROM (
+						SELECT ROW_NUMBER() OVER (ORDER BY BO_IDX DESC) RNUM, BO_IDX, BO_TITLE, BO_DATE, BO_MEMID,
+						BO_COUNT,BO_CONT, BO_IMAGE FROM BOARD WHERE BO_TYPE = #{BO_TYPE} AND BO_TITLE LIKE #{KEYWORD} AND BO_DEL = 1
+					) BO
+				) BOA WHERE BOA.RNUM BETWEEN #{start} AND #{end}
+			]]>		
+		</select>
+		
+		<!-- 자유 게시판 글쓰기 -->
+		<insert id="insertBoard" parameterType="hashmap" >
+			<![CDATA[
+				INSERT INTO
+				BOARD (
+					BO_IDX, BO_TITLE, BO_DATE, BO_MEMID, BO_CONT, BO_IMAGE, BO_TYPE
+				) VALUES (
+					BOARD_SEQ.NEXTVAL, #{BO_TITLE}, SYSDATE, #{BO_MEMID}, #{BO_CONT}, #{BO_IMAGE}, #{BO_TYPE}
+				)
+			 ]]>
+		</insert>
+		
+		<select id="detailBoard" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT BO_IDX, BO_TITLE, BO_DATE, BO_MEMID, BO_CONT, BO_IMAGE, BO_TYPE
+					FROM BOARD
+						WHERE BO_IDX = #{BO_IDX}
+			]]>
+		</select>
+		
+		<!-- 조회수 -->
+		<update id="updateCount" parameterType="hashmap">
+		<![CDATA[
+			UPDATE BOARD 
+			SET
+			BO_COUNT = NVL(BO_COUNT, 0) +1
+			WHERE 
+			BO_IDX = #{BO_IDX}
+		]]>
+	</update>
+		
+		<update id="modifyBoard" parameterType="hashmap">
+			<![CDATA[
+				UPDATE BOARD
+					SET 
+						BO_CONT = #{BO_CONT},
+						BO_IMAGE = #{BO_IMAGE}
+					WHERE 
+						BO_IDX = #{BO_IDX}
+			]]>
+		</update>
+		
+		<update id="deleteBoard" parameterType="hashmap">
+			<![CDATA[
+				UPDATE BOARD
+					SET 
+						BO_DEL = 2
+					WHERE 
+						BO_IDX = #{BO_IDX}
+			]]>
+		</update>
+		
+		<!--  댓글 리스트 -->
+		<select id="selectCommentList" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT COM_IDX, COM_ARTNO, COM_WRITER, COM_DATE, COM_CONT, COM_REF, COM_STEP, COM_LEVEL
+				FROM COMMENTS
+				WHERE COM_ARTNO = #{BO_IDX}
+				ORDER BY COM_REF DESC, COM_STEP ASC
+			]]>		
+		</select>
+		
+		<!-- 댓글 입력 -->
+		<insert id="insertComment" parameterType="hashmap">
+			<![CDATA[
+				INSERT INTO
+				COMMENTS (
+					COM_IDX, COM_ARTNO, COM_WRITER, COM_DATE, COM_CONT, COM_REF, COM_STEP, COM_LEVEL
+				) 
+				VALUES ( 
+					COMMENTS_SEQ.NEXTVAL, #{COM_ARTNO}, #{COM_WRITER}, SYSDATE, #{COM_CONT}, #{COM_REF}, #{COM_STEP}, #{COM_LEVEL}
+				)
+			 ]]>
+		</insert>
+		
+		<!-- REF 그룹의 총 개수 -->
+		<select id="countRef" parameterType="hashmap" resultType="int">
+			<![CDATA[
+				SELECT COUNT(COM_REF)
+				FROM COMMENTS
+				WHERE COM_REF = #{COM_REF}
+			]]>		
+		</select>
+		
+		<!--  게시글에 존재하는 댓글 총 수 -->
+		<select id="getMaxIdx" parameterType="Long" resultType="Long">
+			<![CDATA[
+				select max(COM_IDX) from COMMENTS
+			]]>		
+		</select>
+		
+		<!-- STEP 1씩 증가 -->
+		<update id="updateRestep" parameterType="hashmap">
+			<![CDATA[
+				UPDATE COMMENTS
+				SET COM_STEP = COM_STEP + 1
+				WHERE COM_REF = #{COM_REF} AND COM_STEP >= #{COM_STEP}
+			]]>
+		</update>
+		<update id="updateComment" parameterType="hashmap">
+			<![CDATA[
+				UPDATE COMMENTS
+				SET COM_CONT = #{COM_CONT}
+				WHERE COM_IDX = #{COM_IDX}
+			]]>
+		</update>
+		
+ 		<delete id="deleteComment" parameterType="int">
+			<![CDATA[
+				DELETE FROM COMMENTS
+				WHERE COM_IDX = #{COM_IDX}
+			]]>
+		</delete> 
+		
+	</mapper>

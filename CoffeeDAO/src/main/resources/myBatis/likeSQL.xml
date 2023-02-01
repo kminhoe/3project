@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="like">
+
+<!-- 찜하기 -->
+	<insert id="putLike" parameterType="hashmap">
+	<![CDATA[
+		INSERT INTO
+			LIKES
+		VALUES(
+			LIKES_SEQ.NEXTVAL,
+			#{UP_ID},
+			#{UP_COUNT},
+			#{UP_MEM}
+		)
+	]]>
+	</insert>
+	
+
+	<select id="selectLike" parameterType="hashmap" resultType="hashmap">
+	
+	<![CDATA[
+	
+	SELECT * 
+	FROM LIKES
+	WHERE 
+	UP_ID = #{UP_ID} AND UP_MEM = #{UP_MEM} AND UP_COUNT = '1'
+
+	
+	]]>
+
+	</select>
+	
+	
+	<select id="likeList" parameterType="hashmap" resultType="hashmap">
+	
+	<![CDATA[
+	
+	SELECT * 
+	FROM LIKES
+	WHERE 
+	UP_ID = #{UP_ID} AND UP_MEM = #{UP_MEM} AND UP_COUNT = '1'
+
+	
+	]]>
+
+	</select>
+	
+	<delete id="deleteLike" parameterType="hashmap" >
+	
+	<![CDATA[
+	
+	DELETE FROM LIKES WHERE UP_ID = #{UP_ID} AND UP_MEM = #{UP_MEM}
+
+	
+	]]>
+
+	</delete>
+	
+	<select id="countLike" parameterType="hashmap" resultType="hashmap">
+	
+	<![CDATA[
+	
+	SELECT COUNT(*) 
+	FROM LIKES
+	WHERE 
+	UP_ID = #{UP_ID}
+
+	
+	]]>
+
+	</select>
+
+
+</mapper>

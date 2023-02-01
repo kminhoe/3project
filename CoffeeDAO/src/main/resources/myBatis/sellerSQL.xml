@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="seller">
+	
+	<!-- 아이디 중복확인, 로그인 기능, 회원정보수정폼 --> 
+		<select id="selectSellerId" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT * 
+				FROM 
+					SELLER
+				WHERE 
+					SELL_ID = #{SELL_ID} 
+				AND
+					SELL_STATE = 1
+			]]>
+		</select>
+	
+	   <!-- 회원가입 -->
+		<insert id="insertSeller" parameterType="hashmap" >
+			<![CDATA[
+				INSERT INTO 
+					SELLER (
+						SELL_ID, SELL_PWD, SELL_NUM, SELL_NAME, SELL_PHONE,
+						SELL_ADDR1, SELL_ADDR2, SELL_ZP, SELL_EMAIL, SELL_IMAGE,
+						SELL_PROF, SELL_CONT, SELL_RDATE, SELL_SNS, SELL_STATE)
+				VALUES (
+					#{SELL_ID},
+					#{SELL_PWD},
+					#{SELL_NUM},
+					#{SELL_NAME},
+					#{SELL_PHONE},
+					#{SELL_ADDR1},
+					#{SELL_ADDR2},
+					#{SELL_ZP},
+					#{SELL_EMAIL},
+					#{SELL_IMAGE},
+					#{SELL_PROF, jdbcType=VARCHAR},
+					#{SELL_CONT, jdbcType=VARCHAR},
+					SYSDATE,
+					#{SELL_SNS},
+					'2'
+			    ) 
+			 ]]>
+		</insert>
+		
+			<!-- 업체회원 아이디 찾기 -->
+		<select id="sellerFindId" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+			SELECT 
+				SELL_ID, 
+				SELL_NAME 
+			FROM
+				SELLER 
+			WHERE 
+				SELL_EMAIL = #{seller_email} 
+			AND 
+				SELL_NAME = #{seller_name}
+			]]>
+		</select>
+
+		<select id="sellerFindIdPhone" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+			SELECT 
+				SELL_ID, 
+				SELL_NAME 
+			FROM
+				SELLER 
+			WHERE 
+				SELL_PHONE = #{seller_phone} 
+			AND 
+				SELL_NAME = #{seller_name}
+			]]>
+		</select>
+
+	<!-- 업체회원 비밀번호 찾기 -->
+		<select id="sellerFindPw" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT 
+				SELL_PWD, 
+				SELL_NAME 
+			FROM 
+				SELLER
+			WHERE 
+				SELL_NAME = #{seller_name} 
+			AND 
+				SELL_ID = #{seller_id}
+		]]>
+	</select>
+	
+	<!-- 업체정보 수정 -->
+	<update id="modifySeller" parameterType="hashmap">
+	   <![CDATA[
+	      UPDATE 
+	      	SELLER 
+	      SET  
+	         SELL_PWD = #{SELL_PWD},
+	         SELL_PHONE = #{SELL_PHONE},
+	         SELL_ADDR1 = #{SELL_ADDR1},
+	         SELL_ADDR2 = #{SELL_ADDR2},
+	         SELL_ZP = #{SELL_ZP},
+	         SELL_EMAIL = #{SELL_EMAIL},
+	         SELL_PROF = #{SELL_PROF},
+	         SELL_IMAGE = #{SELL_IMAGE},
+	         SELL_BANK = #{SELL_BANK},
+	         SELL_NAME = #{SELL_NAME},
+	         SELL_CONT = #{SELL_CONT},
+	         SELL_BNUM = #{SELL_BNUM},
+	         SELL_SNS = #{SELL_SNS}
+	      WHERE 
+	         SELL_ID = #{SELL_ID}
+	   ]]>
+	</update>
+
+	<!-- 업체수정 - 업체 선택 -->
+	<select id="detailSeller" parameterType="hashmap"
+		resultType="hashmap">
+		<![CDATA[
+      		SELECT 
+      			* 
+      		FROM 
+         		SELLER
+          	WHERE 
+          		SELL_ID= #{SELL_ID} 
+        ]]>
+	</select>
+	
+	<!-- 업체 탈퇴 -->
+	<update id="deleteSeller" parameterType="hashmap">
+	   <![CDATA[
+	      UPDATE 
+	      	SELLER 
+	      SET  
+	         SELL_STATE = #{SELL_STATE}
+	      WHERE 
+	         SELL_ID = #{SELL_ID}
+	   ]]>
+	</update>
+	
+	<!-- 베스트 업체 리스트 -->
+		<select id="bestSellerList" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT SELL_ID, SELL_NAME, SELL_PROF, SELL_CONT, SELL_SNS FROM SELLER WHERE SELL_STATE = 1
+			 ]]>
+		</select>
+		
+		
+		<select id="sellerList" parameterType="hashmap" resultType="hashmap">
+	<![CDATA[
+		SELECT *
+		FROM (
+			SELECT SELL_ID, SELL_NAME, SELL_IMAGE, SELL_PROF, SELL_EMAIL, SELL_SNS, ROWNUM R
+			FROM ( 	
+				SELECT SELL_ID, SELL_NAME, SELL_IMAGE, SELL_PROF, SELL_EMAIL, SELL_SNS 
+				FROM
+					SELLER
+				WHERE
+					SELL_STATE = 1
+				ORDER BY SELL_RDATE ASC
+			)
+		)
+		WHERE
+			R BETWEEN #{START} AND #{END}
+	]]>
+     </select>
+     <select id="sellerListCount" resultType="hashmap">
+        <![CDATA[
+				SELECT COUNT(*) COUNT
+				FROM
+					SELLER
+				WHERE
+					SELL_STATE = 1
+	 	]]>
+	</select>
+	
+	<!-- 주문내역 총갯수 -->
+	<select id="countSelectOrder" resultType="int">
+		<![CDATA[
+				SELECT COUNT(*) FROM ORDERS WHERE ORDER_SELLER = #{ORDER_SELLER} AND ORDER_STATE LIKE #{KEYWORD}
+			]]>	
+	</select>
+	
+	<!-- 주문내역 리스트 -->
+		<select id="selectOrderList" parameterType="hashmap" resultType="hashmap">
+			<![CDATA[
+				SELECT MOA.* 
+					FROM (
+					SELECT COUNT(*) OVER() AS TOTAL_COUNT, MEM.*
+					FROM (
+					SELECT ROW_NUMBER() OVER (ORDER BY ORDER_DATE DESC) RNUM, ORDER_IDX, ORDER_ID, ORDER_CART, ORDER_MEM, 
+					ORDER_NAME, ORDER_DATE, ORDER_NO, ORDER_ITEM, ORDER_COUNT, ORDER_PRICE, ORDER_TOT, ORDER_PHONE, 
+					ORDER_ZP, ORDER_ADDR1, ORDER_ADDR2, ORDER_HOLDER, ORDER_BANK, ORDER_ACCNO, ORDER_BILL, ORDER_STATE, 
+					ORDER_SENDNO, ORDER_SELLER, ORDER_MEMO, ORDER_SUB, ORDER_GRIND 
+					FROM ORDERS WHERE ORDER_SELLER = #{SELL_ID}
+					AND ORDER_DATE BETWEEN TO_DATE(#{startDate}, 'YYYY/MM/DD') AND TO_DATE(#{endDate}, 'YYYY/MM/DD')+1
+									
+				) MEM
+				) MOA WHERE MOA.RNUM BETWEEN #{start} AND #{end}
+			]]>		
+			
+		</select>
+		<!-- 주문상태 변경 -->
+		<update id="stateUpdate" parameterType="hashmap">
+			<![CDATA[
+				UPDATE ORDERS SET
+				ORDER_STATE = #{ORDER_STATE}, ORDER_SENDNO = #{ORDER_SENDNO}
+				WHERE ORDER_IDX = #{ORDER_IDX}	
+			]]>
+			
+		</update>
+	
+		
+	</mapper>

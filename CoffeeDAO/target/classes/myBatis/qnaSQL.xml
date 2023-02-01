@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+	<mapper namespace="qna">
+	
+	<select id="selectAdminList" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT QOA.* 
+				FROM (
+					SELECT COUNT(*) OVER() AS TOTAL_COUNT, QO.* FROM ( 
+						SELECT ROW_NUMBER() OVER (ORDER BY QA_IDX DESC) RNUM, QA_IDX, QA_DATE, QA_CLASS, QA_TITLE, QA_CONT, QA_WRITER, QA_STATE, QA_IMAGE, QA_DEL FROM QUESTION_ASK WHERE QA_TITLE LIKE #{KEYWORD} AND QA_DEL = '1'
+			) QO ) QOA WHERE QOA.RNUM BETWEEN #{start} AND #{end}
+		]]>
+	</select>
+	
+	<select id="adminQnaDetail" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM QUESTION_ASK WHERE QA_IDX = #{QA_IDX}
+		]]>
+	</select>
+	
+	<update id="adminQnaReply" parameterType="hashmap">
+		<![CDATA[
+		UPDATE QUESTION_ASK
+		SET QA_CONT = #{QA_CONT},
+			QA_STATE = '답변 완료'
+			
+		WHERE QA_IDX = #{QA_IDX}
+		]]>
+	</update>
+	
+	<update id="adminQnaDelete" parameterType="hashmap">
+		<![CDATA[
+			UPDATE QUESTION_ASK 
+			SET QA_DEL = 2
+			WHERE QA_IDX = #{QA_IDX}
+		]]>
+	</update>
+	
+	<select id="inquiryList" parameterType="hashmap"
+		resultType="hashmap">
+	
+	<![CDATA[
+	
+	SELECT *
+	FROM QUESTION_ASK
+
+	
+	]]>
+
+	</select>
+
+	<select id="count" parameterType="hashmap" resultType="int">
+	
+	 <![CDATA[
+	
+	  SELECT COUNT(*)
+	  FROM QUESTION_ASK WHERE QA_DEL = '1' ]]>
+
+		<if test="keyword != null">
+			AND QA_TITLE like '%'||#{keyword}||'%'
+		</if>
+
+	</select>
+
+	<select id="inquiryListPage" parameterType="hashmap"
+		resultType="hashmap">
+	
+	<![CDATA[
+	
+	SELECT RN, QA_IDX, QA_DATE, QA_CLASS, QA_TITLE, QA_CONT, QA_WRITER, QA_STATE, QA_IMAGE, QA_DEL
+	FROM
+    (SELECT /*+ INDEX(QUESTION_ASK QA_IDX_IN) */ ROWNUM RN, QA_IDX, QA_DATE, QA_CLASS, QA_TITLE, 
+    QA_CONT, QA_WRITER, QA_STATE, QA_IMAGE, QA_DEL FROM QUESTION_ASK WHERE ROWNUM <= #{pageNum} * #{amount} and QA_DEL = '1'
+    ]]>
+	
+		<if test="keyword != null">
+			and QA_TITLE like '%'||#{keyword}||'%' 
+			</if>
+     <![CDATA[ 
+         )
+     WHERE RN > (#{pageNum} -1) * #{amount} 
+	 ]]>
+
+	</select>
+
+
+	<insert id="inquiryWrite" parameterType="hashmap">
+	<![CDATA[
+	
+	INSERT INTO 
+		QUESTION_ASK 
+		(QA_IDX, QA_DATE, QA_CLASS, QA_TITLE, QA_CONT,
+		QA_WRITER, QA_IMAGE, QA_DEL, QA_STATE)
+		VALUES
+		(QUESTION_ASK_SEQ.NEXTVAL,
+		SYSDATE, 
+		#{QA_CLASS},
+		#{QA_TITLE},
+		#{QA_CONT}, 
+		#{QA_WRITER},
+		#{QA_IMAGE},
+		'1',
+		'답변 대기'
+		)
+	]]>
+	</insert>
+
+
+   <select id="inquiryDetail" parameterType="hashmap"
+		resultType="hashmap">
+	
+	<![CDATA[
+	
+	SELECT *
+	FROM QUESTION_ASK 
+	WHERE QA_IDX = #{QA_IDX}
+
+	
+	]]>
+
+	</select>
+
+	<!-- 게시글 수정 -->
+	<update id="inquiryUpdate" parameterType="hashmap">
+	   <![CDATA[
+	      UPDATE 
+	      	QUESTION_ASK 
+	      SET  
+	         QA_DATE = SYSDATE,
+	         QA_CLASS = #{QA_CLASS},
+	         QA_TITLE = #{QA_TITLE},
+	         QA_CONT = #{QA_CONT},
+	         QA_IMAGE = #{QA_IMAGE}
+	      WHERE 
+	         QA_IDX = #{QA_IDX}
+	   ]]>
+	</update>
+	
+	<!-- 게시글 삭제 -->
+	<update id="inquiryDelete" parameterType="hashmap">
+	   <![CDATA[
+	      UPDATE 
+	      	QUESTION_ASK 
+	      SET  
+	         QA_DEL = '2'
+	      WHERE 
+	         QA_IDX = #{QA_IDX}
+	   ]]>
+	</update>
+	
+	</mapper>
