@@ -1,0 +1,122 @@
+
+<html>
+<head>
+	<title>Home</title>
+
+<style>
+  .modal_overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(1.5px);
+        -webkit-backdrop-filter: blur(1.5px);
+    }
+
+    .modal_window {
+        background: white;
+        backdrop-filter: blur(13.5px);
+        -webkit-backdrop-filter: blur(13.5px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        position: relative;
+        padding: 10px;
+    }
+
+</style>
+
+</head>
+<body>
+
+    <div class="modal_overlay" >
+        <div class="modal_window" style="width: 400px; height: 700px; text-align: center;" >
+            <div style="display: flex; vertical-align: middle;">
+            <h3 style="width: 370px; margin: 0 0 0 0; display: inline-block;">신고</h3>
+            <button style="border: none; background-color: white; align">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                  </svg></button>
+        </div>
+        <hr>
+         <h4>이 게시물을 신고하는 이유</h4>
+         <hr>
+         <div style="display: flex; vertical-align: middle; text-align: justify;">
+         <p style="text-align: left; color: #808080; display: inline-block; margin: 10px 10px; width: 370px;">
+            스팸</p>
+         <span style="margin: 10px 0px; text-align: right;">
+         <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="#808080" class="bi bi-chevron-right" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg></span>
+        </div>
+        <hr>
+        <div style="display: flex; vertical-align: middle; text-align: justify;">
+            <p style="text-align: left; color: #808080; display: inline-block; margin: 10px 10px; width: 370px;">
+                나체 이미지 또는 성적 행위</p>
+            <span style="margin: 10px 0px; text-align: right;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="#808080" class="bi bi-chevron-right" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+             </svg></span>
+           </div>
+
+           <div style="display: flex; vertical-align: middle; text-align: justify;">
+            <p style="text-align: left; color: #808080; display: inline-block; margin: 10px 10px; width: 370px;">
+               혐오 발언 또는 상징</p>
+            <span style="margin: 10px 0px; text-align: right;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="#808080" class="bi bi-chevron-right" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+             </svg></span>
+           </div>
+           <hr>
+
+           <div style="display: flex; vertical-align: middle; text-align: justify;">
+            <p style="text-align: left; color: #808080; display: inline-block; margin: 10px 10px; width: 370px;">
+               폭력 또는 위험한 단체</p>
+            <span style="margin: 10px 0px; text-align: right;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="#808080" class="bi bi-chevron-right" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+             </svg></span>
+           </div>
+           <hr>
+
+           <div style="display: flex; vertical-align: middle; text-align: justify;">
+            <p style="text-align: left; color: #808080; display: inline-block; margin: 10px 10px; width: 370px;">
+               불법 또는 규제 상품 판매</p>
+            <span style="margin: 10px 0px; text-align: right;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="#808080" class="bi bi-chevron-right" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+             </svg></span>
+            </div>
+           <hr>
+
+           <div style="display: flex; vertical-align: middle; text-align: justify;">
+            <p style="text-align: left; color: #808080; display: inline-block; margin: 10px 10px; width: 370px;">
+               기타</p>
+            <span style="margin: 10px 0px; text-align: right;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="#808080" class="bi bi-chevron-right" viewBox="0 0 16 16">
+               <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+             </svg></span>
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <div class="modal_overlay" >
+        <div class="modal_window" style="width: 400px; height: 220px; text-align: center;" >
+            
+          <!--modal_window-->
+        </div>
+        <!--modal_overlay-->
+    </div>
+
+
+
+</body>
+</html>
