@@ -46,7 +46,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>action</servlet-name>
-		<url-pattern>*.da</url-pattern>
+		<url-pattern>*.ya</url-pattern>
 	</servlet-mapping>
      
     <context-param>
