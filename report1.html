@@ -1,0 +1,51 @@
+
+<html>
+<head>
+	<title>Home</title>
+
+<style>
+  .modal_overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(1.5px);
+        -webkit-backdrop-filter: blur(1.5px);
+    }
+
+    .modal_window {
+        background: white;
+        backdrop-filter: blur(13.5px);
+        -webkit-backdrop-filter: blur(13.5px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        position: relative;
+        padding: 10px;
+    }
+
+</style>
+
+</head>
+<body>
+
+    <div class="modal_overlay" >
+        <div class="modal_window" style="width: 330px; height: 440px; text-align: center;" >
+            <h2>회원님의 계정이 일시적으로 잠겼습니다</h2>
+<p>회원님의 Roomie 계정에서 의심스러운 활동을 감지했으며 보안을 위해 계정을 일시적으로 잠갔습니다.</p>
+<p>Roomie와 비슷하게 만들어진 웹사이트에서 비밀번호를 입력하여 계정이 해킹되었을 수 있습니다. 이러한 공격을 피싱이라고 합니다.</p>
+<p>앞으로 몇 단계에 걸쳐 회원님의 계정 보안을 위해 신원을 확인한 후 계정 로그인 권한을 복원해드리겠습니다.</p>
+
+<button style="width: 270px; height: 40px; background-color: #0095ff; border: none; color: #FFFFFF;">계속</button>
+        </div>
+    </div>
+
+
+
+</body>
+</html>

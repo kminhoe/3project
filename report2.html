@@ -1,0 +1,57 @@
+
+<html>
+<head>
+	<title>Home</title>
+
+<style>
+  .modal_overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(1.5px);
+        -webkit-backdrop-filter: blur(1.5px);
+    }
+
+    .modal_window {
+        background: white;
+        backdrop-filter: blur(13.5px);
+        -webkit-backdrop-filter: blur(13.5px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        position: relative;
+        padding: 10px;
+    }
+
+</style>
+
+</head>
+<body>
+
+    <div class="modal_overlay" >
+        <div class="modal_window" style="width: 330px; height: 440px; text-align: center;" >
+            <div style="text-align: left;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+              </svg></div>
+            <h2>이 계정이 회원님의 계정인지 확인해주세요</h2>
+            <br><br>
+<p>본인 확인을 위한 보안 코드를 보내드립니다.</p>
+<!-- 해당 회원의 이메일 불러오기-->
+<p>이메일: aaa@gmail.com</p>
+
+<br><br><br><br>
+<button style="width: 270px; height: 40px; background-color: #0095ff; border: none; color: #FFFFFF;">보안코드 보내기</button>
+        </div>
+    </div>
+
+
+
+</body>
+</html>
