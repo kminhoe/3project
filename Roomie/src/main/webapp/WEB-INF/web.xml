@@ -22,7 +22,7 @@
 	
 	<filter-mapping>
 		<filter-name>encodingFilter</filter-name>
-		<url-pattern>*.da</url-pattern>
+		<url-pattern>*.ya</url-pattern>
 	</filter-mapping>
 	
 	<!-- Creates the Spring Container shared by all Servlets and Filters -->
